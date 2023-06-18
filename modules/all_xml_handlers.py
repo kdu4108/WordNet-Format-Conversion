@@ -568,7 +568,7 @@ def xml_handler_general(src_file, rel_name_symbol):
     unwanted_sections = set()
     comment = []
 
-    tree = ET.ElementTree(file=os.getcwd() + "/data/input/" + src_file)
+    tree = ET.ElementTree(file=os.path.join(os.getcwd(), "data/input/", src_file))
     root = tree.getroot()
 
     for section in root:

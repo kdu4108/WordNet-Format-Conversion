@@ -28,7 +28,7 @@ def rel_name_symbol_loader(process):
 
 def data_file_writer(all_comments,data, main_path, pos_key):
     pos = {"n":"noun", "a":"adj", "r":"adv", "v":"verb"}
-    data_file = open(main_path + "data." + pos[pos_key], "w")
+    data_file = open(os.path.join(main_path, "data." + pos[pos_key]), "w")
     data_file.write(all_comments)
     for line in data:
         data_file.write(line)

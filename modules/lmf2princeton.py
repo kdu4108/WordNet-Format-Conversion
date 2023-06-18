@@ -18,7 +18,7 @@ def lmf2pri(source_files, id_prefix, sim_id_prefix, main_path):
     rel_name_symbol = rel_name_symbol_loader("l2p")  # {key = relation_name: val = relation_symbol}
 
     for src_file in source_files:
-        if "odwn-" in id_prefix:
+        if "omw-nl" in id_prefix:
             all_senses, all_synsets, synset_with_words, comment = xml_handler_odwn(src_file, rel_name_symbol)
         elif "zho-" in id_prefix:
             all_senses, all_synsets, synset_with_words, comment = xml_handler_zho(src_file, rel_name_symbol)
@@ -27,6 +27,7 @@ def lmf2pri(source_files, id_prefix, sim_id_prefix, main_path):
         elif "cmn-" in id_prefix:
             all_senses, all_synsets, synset_with_words, comment = xml_handler_chn(src_file, rel_name_symbol)
         else:
+            # NOTE: comment will be improperly formatted if the XML includes a `&#10;` which omw-arb.lmf does in the citation, for some reason. (hotfix: manually delete the &#10; from that lmf file.)
             all_senses, all_synsets, synset_with_words, comment = xml_handler_general(src_file, rel_name_symbol)
         data_file_creator(synset_with_words, all_synsets, id_prefix, sim_id_prefix, comment, src_file, main_path)
         index_file_creator(main_path)
@@ -59,7 +60,7 @@ def data_file_creator(synset_with_words, all_synsets, id_prefix, sim_id_prefix, 
         all_comments += line
         line_num += 1
 
-    similar_to_log = open(main_path + id_prefix + "_similar_to_" + sim_id_prefix, "w")
+    similar_to_log = open(os.path.join(main_path, id_prefix + "_similar_to_" + sim_id_prefix), "w")
 
     mappings = {"n": {}, "v": {}, "r": {}, "a": {}}
     all_data = {"n": [], "v": [], "r": [], "a": []}
@@ -69,7 +70,7 @@ def data_file_creator(synset_with_words, all_synsets, id_prefix, sim_id_prefix, 
             print("    Working on the " + pos_name[key] + " data")
             # 2nd: creating the data file with the LMF IDs
 
-            prob_log = open(main_path + "synset_extraction_issue_" + pos_name[key], "w")
+            prob_log = open(os.path.join(main_path, "synset_extraction_issue_" + pos_name[key]), "w")
             prob_log.write("the following synset information are either not extracted properly or were not complete in the LMF file\n\n")
 
             current_offset = len(all_comments.encode("utf8"))
@@ -175,12 +176,12 @@ def index_file_creator(main_path):
     data_files = ["data.noun","data.adv","data.verb","data.adj"]
 
     for data_file in data_files:
-        inputFile = open(main_path + data_file)
+        inputFile = open(os.path.join(main_path, data_file))
         src = inputFile.readlines()
         inputFile.close()
 
         f_name = "index." + data_file.split(".")[1]
-        index_file = open(main_path + f_name, "w")
+        index_file = open(os.path.join(main_path, f_name), "w")
 
         seenWrds = set()
         wrdsInfos = {}
