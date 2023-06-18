@@ -1,6 +1,3 @@
-# coding=utf-8
-#! /usr/bin/env python3.4
-
 """
 This code migrate wordnet data from LMF format to Princeton
 
@@ -13,6 +10,7 @@ import os
 
 from modules.input_output import *
 import xml.etree.cElementTree as ET
+
 
 def xml_handler_odwn(src_file, rel_name_symbol):
     # this function reads the the Dutch xml file and saves the sense/synsets info
@@ -49,21 +47,23 @@ def xml_handler_odwn(src_file, rel_name_symbol):
 
     for section in root:
         if section.tag not in unwanted_sections:
-            print("  **  "  + section.tag)
-            if section.tag == "Lexicon":                     # The "Lexicon" section is what we need
+            print("  **  " + section.tag)
+            if section.tag == "Lexicon":  # The "Lexicon" section is what we need
                 if comment == []:
                     for attrib in section.attrib:
                         comment.append(str(attrib) + ": " + section.attrib[attrib])
-                for element in section:                      # Each Lexicon has 2 elements "LexicalEntry" and "Synset"
+                for element in section:  # Each Lexicon has 2 elements "LexicalEntry" and "Synset"
                     # LexicalEntry
                     if element.tag == "LexicalEntry":
                         containing_synset = []
-                        valid_sense = True                   # if a sense doesn't belong to a synset it is invalid
-                        this_LexicalEntry = element          # just to make the code easier to follow
+                        valid_sense = True  # if a sense doesn't belong to a synset it is invalid
+                        this_LexicalEntry = element  # just to make the code easier to follow
                         id = this_LexicalEntry.attrib["id"]
-                        #print("    Current LexicalEntry: ", id)
+                        # print("    Current LexicalEntry: ", id)
 
-                        for word_info in this_LexicalEntry:  # each lexical entry has Lemma, pos, sense1..n and the belonging synset
+                        for (
+                            word_info
+                        ) in this_LexicalEntry:  # each lexical entry has Lemma, pos, sense1..n and the belonging synset
                             if word_info.tag == "Lemma":
                                 lemma = word_info.attrib["writtenForm"]
                                 seen_words.add(lemma)
@@ -87,14 +87,14 @@ def xml_handler_odwn(src_file, rel_name_symbol):
                         if valid_sense:
                             senses[id] = (lemma, word_pos, containing_synset)
 
-                    #Synset
+                    # Synset
                     elif element.tag == "Synset":
                         gloss = ""
                         rel_type = []
                         target_synset = []
                         target_synset_pos = []
 
-                        this_synset = element               # just to make the code easier to follow
+                        this_synset = element  # just to make the code easier to follow
                         id = this_synset.attrib["id"]
                         synset_pos = id.split("-")[-1]
 
@@ -127,7 +127,18 @@ def xml_handler_odwn(src_file, rel_name_symbol):
                             synset_words = ""
                         else:
                             synset_words = synsets[id]
-                        synsets[id] = (synset_num, [synset_words, synset_pos, rel_type, target_synset, target_synset_pos, gloss[:gloss.rfind(";")]],[])
+                        synsets[id] = (
+                            synset_num,
+                            [
+                                synset_words,
+                                synset_pos,
+                                rel_type,
+                                target_synset,
+                                target_synset_pos,
+                                gloss[: gloss.rfind(";")],
+                            ],
+                            [],
+                        )
                         synset_num += 1
 
                     else:
@@ -136,6 +147,7 @@ def xml_handler_odwn(src_file, rel_name_symbol):
                 print("    Unknown section in the input file: " + str(section.tag))
                 unwanted_sections.add(section.tag)
     return senses, synsets, synset_with_words, comment
+
 
 def xml_handler_zho(src_file, rel_name_symbol):
     # this function reads the the Dutch xml file and saves the sense/synsets info
@@ -163,20 +175,22 @@ def xml_handler_zho(src_file, rel_name_symbol):
 
     for section in root:
         if section.tag not in unwanted_sections:
-            print("  **  "  + section.tag)
-            if section.tag == "Lexicon":                     # The "Lexicon" section is what we need
+            print("  **  " + section.tag)
+            if section.tag == "Lexicon":  # The "Lexicon" section is what we need
                 if comment == []:
                     for attrib in section.attrib:
                         comment.append(str(attrib) + ": " + section.attrib[attrib])
-                for element in section:                      # Each Lexicon has 2 elements "LexicalEntry" and "Synset"
+                for element in section:  # Each Lexicon has 2 elements "LexicalEntry" and "Synset"
                     # LexicalEntry
                     if element.tag == "LexicalEntry":
                         containing_synset = []
-                        valid_sense = True                   # if a sense doesn't belong to a synset it is invalid
-                        this_LexicalEntry = element          # just to make the code easier to follow
-                        #print("    Current LexicalEntry: ", id)
+                        valid_sense = True  # if a sense doesn't belong to a synset it is invalid
+                        this_LexicalEntry = element  # just to make the code easier to follow
+                        # print("    Current LexicalEntry: ", id)
 
-                        for word_info in this_LexicalEntry:  # each lexical entry has Lemma, pos, sense1..n and the belonging synset
+                        for (
+                            word_info
+                        ) in this_LexicalEntry:  # each lexical entry has Lemma, pos, sense1..n and the belonging synset
                             if word_info.tag == "Lemma":
                                 lemma = word_info.attrib["writtenForm"]
                                 seen_words.add(lemma)
@@ -201,14 +215,14 @@ def xml_handler_zho(src_file, rel_name_symbol):
                         if valid_sense:
                             senses[id] = (lemma, word_pos, containing_synset)
 
-                    #Synset
+                    # Synset
                     elif element.tag == "Synset":
                         gloss = ""
                         rel_type = []
                         target_synset = []
                         target_synset_pos = []
 
-                        this_synset = element               # just to make the code easier to follow
+                        this_synset = element  # just to make the code easier to follow
                         id = this_synset.attrib["id"]
                         synset_pos = id.split("-")[-1]
 
@@ -231,7 +245,18 @@ def xml_handler_zho(src_file, rel_name_symbol):
                             synset_words = ""
                         else:
                             synset_words = synsets[id]
-                        synsets[id] = (synset_num, [synset_words, synset_pos, rel_type, target_synset, target_synset_pos, gloss[:gloss.rfind(";")]],[])
+                        synsets[id] = (
+                            synset_num,
+                            [
+                                synset_words,
+                                synset_pos,
+                                rel_type,
+                                target_synset,
+                                target_synset_pos,
+                                gloss[: gloss.rfind(";")],
+                            ],
+                            [],
+                        )
                         synset_num += 1
 
                     else:
@@ -249,6 +274,7 @@ def xml_handler_zho(src_file, rel_name_symbol):
                 print("    Unknown section in the input file: " + str(section.tag))
                 unwanted_sections.add(section.tag)
     return senses, synsets, synset_with_words, comment
+
 
 def xml_handler_jpn(src_file, rel_name_symbol):
     # this function reads the Japanese xml file and saves the sense/synsets info
@@ -296,21 +322,23 @@ def xml_handler_jpn(src_file, rel_name_symbol):
 
     for section in root:
         if section.tag not in unwanted_sections:
-            print("  **  "  + section.tag)
-            if section.tag == "Lexicon":                     # The "Lexicon" section is what we need
+            print("  **  " + section.tag)
+            if section.tag == "Lexicon":  # The "Lexicon" section is what we need
                 if comment == []:
                     for attrib in section.attrib:
                         comment.append(str(attrib) + ": " + section.attrib[attrib])
-                for element in section:                      # Each Lexicon has 2 elements "LexicalEntry" and "Synset"
+                for element in section:  # Each Lexicon has 2 elements "LexicalEntry" and "Synset"
                     # LexicalEntry
                     if element.tag == "LexicalEntry":
                         containing_synset = []
-                        valid_sense = True                   # if a sense doesn't belong to a synset it is invalid
-                        this_LexicalEntry = element          # just to make the code easier to follow
+                        valid_sense = True  # if a sense doesn't belong to a synset it is invalid
+                        this_LexicalEntry = element  # just to make the code easier to follow
                         id = this_LexicalEntry.attrib["id"]
-                        #print("    Current LexicalEntry: ", id)
+                        # print("    Current LexicalEntry: ", id)
 
-                        for word_info in this_LexicalEntry:  # each lexical entry has Lemma, pos, sense1..n and the belonging synset
+                        for (
+                            word_info
+                        ) in this_LexicalEntry:  # each lexical entry has Lemma, pos, sense1..n and the belonging synset
                             if word_info.tag == "Lemma":
                                 lemma = word_info.attrib["writtenForm"]
                                 word_pos = word_info.attrib["partOfSpeech"]
@@ -331,14 +359,14 @@ def xml_handler_jpn(src_file, rel_name_symbol):
                         if valid_sense:
                             senses[id] = (lemma, word_pos, containing_synset)
 
-                    #Synset
+                    # Synset
                     elif element.tag == "Synset":
                         gloss = ""
                         rel_type = []
                         target_synset = []
                         target_synset_pos = []
 
-                        this_synset = element               # just to make the code easier to follow
+                        this_synset = element  # just to make the code easier to follow
                         id = this_synset.attrib["id"]
                         synset_pos = id.split("-")[-1]
 
@@ -371,7 +399,18 @@ def xml_handler_jpn(src_file, rel_name_symbol):
                             synset_words = ""
                         else:
                             synset_words = synsets[id]
-                        synsets[id] = (synset_num, [synset_words, synset_pos, rel_type, target_synset, target_synset_pos, gloss[:gloss.rfind(";")]],[])
+                        synsets[id] = (
+                            synset_num,
+                            [
+                                synset_words,
+                                synset_pos,
+                                rel_type,
+                                target_synset,
+                                target_synset_pos,
+                                gloss[: gloss.rfind(";")],
+                            ],
+                            [],
+                        )
                         synset_num += 1
 
                     else:
@@ -388,6 +427,7 @@ def xml_handler_jpn(src_file, rel_name_symbol):
                 print("    Unknown section in the input file: " + str(section.tag))
                 unwanted_sections.add(section.tag)
     return senses, synsets, synset_with_words, comment
+
 
 def xml_handler_chn(src_file, rel_name_symbol):
     # this function reads the Japanese xml file and saves the sense/synsets info
@@ -436,21 +476,23 @@ def xml_handler_chn(src_file, rel_name_symbol):
 
     for section in root:
         if section.tag not in unwanted_sections:
-            print("  **  "  + section.tag)
-            if section.tag == "Lexicon":                     # The "Lexicon" section is what we need
+            print("  **  " + section.tag)
+            if section.tag == "Lexicon":  # The "Lexicon" section is what we need
                 if comment == []:
                     for attrib in section.attrib:
                         comment.append(str(attrib) + ": " + section.attrib[attrib])
-                for element in section:                      # Each Lexicon has 2 elements "LexicalEntry" and "Synset"
+                for element in section:  # Each Lexicon has 2 elements "LexicalEntry" and "Synset"
                     # LexicalEntry
                     if element.tag == "LexicalEntry":
                         containing_synset = []
-                        valid_sense = True                   # if a sense doesn't belong to a synset it is invalid
-                        this_LexicalEntry = element          # just to make the code easier to follow
+                        valid_sense = True  # if a sense doesn't belong to a synset it is invalid
+                        this_LexicalEntry = element  # just to make the code easier to follow
                         id = this_LexicalEntry.attrib["id"]
-                        #print("    Current LexicalEntry: ", id)
+                        # print("    Current LexicalEntry: ", id)
 
-                        for word_info in this_LexicalEntry:  # each lexical entry has Lemma, pos, sense1..n and the belonging synset
+                        for (
+                            word_info
+                        ) in this_LexicalEntry:  # each lexical entry has Lemma, pos, sense1..n and the belonging synset
                             if word_info.tag == "Lemma":
                                 lemma = word_info.attrib["writtenForm"]
                                 word_pos = word_info.attrib["partOfSpeech"]
@@ -471,14 +513,14 @@ def xml_handler_chn(src_file, rel_name_symbol):
                         if valid_sense:
                             senses[id] = (lemma, word_pos, containing_synset)
 
-                    #Synset
+                    # Synset
                     elif element.tag == "Synset":
                         gloss = ""
                         rel_type = []
                         target_synset = []
                         target_synset_pos = []
 
-                        this_synset = element               # just to make the code easier to follow
+                        this_synset = element  # just to make the code easier to follow
                         id = this_synset.attrib["id"]
                         synset_pos = id.split("-")[-1]
 
@@ -514,7 +556,18 @@ def xml_handler_chn(src_file, rel_name_symbol):
                             synset_words = ""
                         else:
                             synset_words = synsets[id]
-                        synsets[id] = (synset_num, [synset_words, synset_pos, rel_type, target_synset, target_synset_pos, gloss[:gloss.rfind(";")]],[])
+                        synsets[id] = (
+                            synset_num,
+                            [
+                                synset_words,
+                                synset_pos,
+                                rel_type,
+                                target_synset,
+                                target_synset_pos,
+                                gloss[: gloss.rfind(";")],
+                            ],
+                            [],
+                        )
                         synset_num += 1
 
                     else:
@@ -531,6 +584,7 @@ def xml_handler_chn(src_file, rel_name_symbol):
                 print("    Unknown section in the input file: " + str(section.tag))
                 unwanted_sections.add(section.tag)
     return senses, synsets, synset_with_words, comment
+
 
 def xml_handler_general(src_file, rel_name_symbol):
     # this function reads the an xml file -Completely compatible with the LMF format- and saves the sense/synsets info
@@ -552,13 +606,12 @@ def xml_handler_general(src_file, rel_name_symbol):
     rel_name_symbol["also"] = rel_name_symbol["also"]
     rel_name_symbol["antonym"] = rel_name_symbol["antonym"]
     rel_name_symbol["similar"] = rel_name_symbol["similar"]
-    #rel_name_symbol["eq_synonym"] = rel_name_symbol["similar"]
-    #rel_name_symbol["sim"] = rel_name_symbol["similar"]
+    # rel_name_symbol["eq_synonym"] = rel_name_symbol["similar"]
+    # rel_name_symbol["sim"] = rel_name_symbol["similar"]
     rel_name_symbol["has_domain_topic"] = rel_name_symbol["has_domain_topic"]
     rel_name_symbol["domain_topic"] = rel_name_symbol["domain_topic"]
     rel_name_symbol["has_domain_region"] = rel_name_symbol["has_domain_region"]
     rel_name_symbol["domain_region"] = rel_name_symbol["domain_region"]
-
 
     senses = {}
     synsets = {}
@@ -573,21 +626,23 @@ def xml_handler_general(src_file, rel_name_symbol):
 
     for section in root:
         if section.tag not in unwanted_sections:
-            print("  **  "  + section.tag)
-            if section.tag == "Lexicon":                     # The "Lexicon" section is what we need
+            print("  **  " + section.tag)
+            if section.tag == "Lexicon":  # The "Lexicon" section is what we need
                 if comment == []:
                     for attrib in section.attrib:
                         comment.append(str(attrib) + ": " + section.attrib[attrib])
-                for element in section:                      # Each Lexicon has 2 elements "LexicalEntry" and "Synset"
+                for element in section:  # Each Lexicon has 2 elements "LexicalEntry" and "Synset"
                     # LexicalEntry
                     if element.tag == "LexicalEntry":
                         containing_synset = []
-                        valid_sense = True                   # if a sense doesn't belong to a synset it is invalid
-                        this_LexicalEntry = element          # just to make the code easier to follow
+                        valid_sense = True  # if a sense doesn't belong to a synset it is invalid
+                        this_LexicalEntry = element  # just to make the code easier to follow
                         id = this_LexicalEntry.attrib["id"]
-                        #print("    Current LexicalEntry: ", id)
+                        # print("    Current LexicalEntry: ", id)
 
-                        for word_info in this_LexicalEntry:  # each lexical entry has Lemma, pos, sense1..n and the belonging synset
+                        for (
+                            word_info
+                        ) in this_LexicalEntry:  # each lexical entry has Lemma, pos, sense1..n and the belonging synset
                             if word_info.tag == "Lemma":
                                 lemma = word_info.attrib["writtenForm"]
                                 word_pos = word_info.attrib["partOfSpeech"]
@@ -608,14 +663,14 @@ def xml_handler_general(src_file, rel_name_symbol):
                         if valid_sense:
                             senses[id] = (lemma, word_pos, containing_synset)
 
-                    #Synset
+                    # Synset
                     elif element.tag == "Synset":
                         gloss = ""
                         rel_type = []
                         target_synset = []
                         target_synset_pos = []
 
-                        this_synset = element               # just to make the code easier to follow
+                        this_synset = element  # just to make the code easier to follow
                         id = this_synset.attrib["id"]
                         synset_pos = id.split("-")[-1]
 
@@ -651,7 +706,18 @@ def xml_handler_general(src_file, rel_name_symbol):
                             synset_words = ""
                         else:
                             synset_words = synsets[id]
-                        synsets[id] = (synset_num, [synset_words, synset_pos, rel_type, target_synset, target_synset_pos, gloss[:gloss.rfind(";")]],[])
+                        synsets[id] = (
+                            synset_num,
+                            [
+                                synset_words,
+                                synset_pos,
+                                rel_type,
+                                target_synset,
+                                target_synset_pos,
+                                gloss[: gloss.rfind(";")],
+                            ],
+                            [],
+                        )
                         synset_num += 1
 
                     else:

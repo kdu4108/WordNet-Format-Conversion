@@ -1,7 +1,5 @@
-# coding=utf-8
-#! /usr/bin/env python3.4
-
 import os
+
 
 def rel_name_symbol_loader(process):
     # To create a dictionary of relation_names and relation_symbols
@@ -18,16 +16,17 @@ def rel_name_symbol_loader(process):
 
     for line in src:
         if process == "l2p":
-            temp = line.replace("\n","").split("\t")
+            temp = line.replace("\n", "").split("\t")
             rel_symbol[temp[0]] = temp[1]
         else:
             temp = line.replace("\n", "").split("\t")
             rel_symbol[temp[1]] = temp[2]
 
-    return(rel_symbol)
+    return rel_symbol
 
-def data_file_writer(all_comments,data, main_path, pos_key):
-    pos = {"n":"noun", "a":"adj", "r":"adv", "v":"verb"}
+
+def data_file_writer(all_comments, data, main_path, pos_key):
+    pos = {"n": "noun", "a": "adj", "r": "adv", "v": "verb"}
     data_file = open(os.path.join(main_path, "data." + pos[pos_key]), "w")
     data_file.write(all_comments)
     for line in data:

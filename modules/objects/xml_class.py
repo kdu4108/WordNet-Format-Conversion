@@ -1,6 +1,7 @@
 import xml.sax
 
-output = open("xmlTestSummary","w")
+output = open("xmlTestSummary", "w")
+
 
 class xml_Handler(xml.sax.ContentHandler):
     def __init__(self):
@@ -15,28 +16,28 @@ class xml_Handler(xml.sax.ContentHandler):
         self.CurrentData = tag
         if tag == "synset":
             id = attributes["id"]
-            print "\nsynset id:", id
-            output.write('\n'+str(id) +'\t')
+            print("\nsynset id:", id)
+            output.write("\n" + str(id) + "\t")
 
         elif tag == "sumo":
             if "type" in attributes._attrs.keys():
                 type = attributes["type"]
-                #print "sumo.type:", type
-                output.write(type + '\t')
+                # print "sumo.type:", type
+                output.write(type + "\t")
 
     # Call when an elements ends
     def endElement(self, tag):
-        #if self.CurrentData == "synset":
+        # if self.CurrentData == "synset":
         #    print "synset:", self.synset
         if self.CurrentData == "domains":
-            #print "domains:", self.domains
-            #domaintSet.add(self.domains)
-            output.write(self.domains + '\t')
+            # print "domains:", self.domains
+            # domaintSet.add(self.domains)
+            output.write(self.domains + "\t")
         elif self.CurrentData == "sumo":
-            #print "sumo.value:", self.sumo
+            # print "sumo.value:", self.sumo
             output.write(self.sumo)
-        #elif self.CurrentData == "synonyms":
-            #print "synonyms:", self.synonyms
+        # elif self.CurrentData == "synonyms":
+        # print "synonyms:", self.synonyms
         self.CurrentData = ""
 
     # Call when a character is read
@@ -47,5 +48,5 @@ class xml_Handler(xml.sax.ContentHandler):
             self.domains = content
         elif self.CurrentData == "sumo":
             self.sumo = content
-        #elif self.CurrentData == "synonyms":
+        # elif self.CurrentData == "synonyms":
         #    self.synonyms = content
