@@ -12,10 +12,16 @@ from modules.input_output import *
 from modules.all_xml_handlers import *
 
 
-def lmf2pri(source_files, id_prefix, sim_id_prefix, main_path):
+def lmf2pri(source_files, id_prefix, sim_id_prefix):
+
     rel_name_symbol = rel_name_symbol_loader("l2p")  # {key = relation_name: val = relation_symbol}
 
     for src_file in source_files:
+        print(f"Converting file: {src_file}.")
+        main_path = os.path.join(
+            os.getcwd(), "data/output/", src_file.split(".")[0]
+        )  # the main path to save the ooutput
+        os.makedirs(main_path, exist_ok=True)
         if "omw-nl" in id_prefix:
             all_senses, all_synsets, synset_with_words, comment = xml_handler_odwn(src_file, rel_name_symbol)
         elif "zho-" in id_prefix:
@@ -46,7 +52,7 @@ def data_file_creator(synset_with_words, all_synsets, id_prefix, sim_id_prefix, 
             if all_synsets[key][1][0] != "":  # if there is at least one word in this synset
                 if all_synsets[key][1][1] in pos:
                     wn_data[all_synsets[key][1][1]].append((key, all_synsets[key]))
-        except:
+        except:  # noqa
             print("    Not accurate data in ****", key)  # all_synsets[key])
 
     # comment section for all data files
@@ -228,7 +234,6 @@ def index_file_creator(main_path):
         f_name = "index." + data_file.split(".")[1]
         index_file = open(os.path.join(main_path, f_name), "w")
 
-        seenWrds = set()
         wrdsInfos = {}
 
         commnt_cnt = 0
